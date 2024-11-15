@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musical Scale Modes Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+            margin: 0;
+        }
+        .menu, .quiz-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+        .menu h2 {
+            margin-bottom: 20px;
+        }
+        .menu button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px 0;
+            width: 100%;
+            background-color: #2196F3;
+            color: white;
+            height: 45px; /* Ensures buttons fit properly */
+        }
+        .mode-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        .answer-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .answer {
+            font-size: 1.2em;
+            color: #333;
+            visibility: hidden;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: auto;
+        }
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 120px;
+            font-size: 1.1em;
+            margin: 0 5px;
+        }
+        .button-show {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .button-next {
+            background-color: #2196F3;
+            color: white;
+            display: none;
+        }
+        .button-back {
+            background-color: #FF5722;
+            color: white;
+        }
+        .quiz-card {
+            height: 300px; /* Fixed height to maintain previous size */
+        }
+    </style>
+</head>
+<body>
+
+<div class="menu" id="menu">
+    <h2>Modes</h2>
+    <!-- Buttons will be dynamically generated here -->
+    <div id="question-buttons"></div>
+    <button onclick="randomQuestion()">Random</button>
+</div>
+
+<div class="quiz-card" id="quiz-card" style="display: none;">
+    <div>
+        <div class="mode-name">Mode Name</div>
+        <div class="question">Question will appear here</div>
+    </div>
+    <div class="answer-container">
+        <div class="answer">Answer will appear here</div>
+    </div>
+    <div class="button-container">
+        <button class="button button-show" onclick="showAnswer()">Show Answer</button>
+        <button class="button button-next" onclick="nextQuestion()">Next Question</button>
+        <button class="button button-back" onclick="showMenu()">Back to Menu</button>
+    </div>
+</div>
+
+<script>
+    const data = {
+        "attributes": {
+            "function": "Function",
+            "triadQuality": "Triad quality",
+            "seventhQuality": "7th quality",
+            "seventhNotes": "7th notes",
+            "transitionsFrom": "Transitions from which mode?",
+            "characteristicTone": "Characteristic tone",
+            "unstableTones": "Unstable tones",
+            "unnaturalNotes": "Sharp/flat notes",
+            "colorNotes": "Color notes",
+            "intervallicSet": "Intervallic set",
+        },
+        "modes": [
+            {"characteristicTone":"—","colorNotes":"2 4 6","function":"I","intervallicSet":["1","2","3","4","5","6","7"],"mode":"Ionian (major scale)","seventhNotes":"R 3 5 7","seventhQuality":"maj7","transitionsFrom":"—","triadQuality":"Major","unnaturalNotes":"—","unstableTones":"4"},
+            {"characteristicTone":"6","colorNotes":"2 4 6","function":"ii","intervallicSet":["1","2","b3","4","5","6","b7"],"mode":"Dorian","seventhNotes":"R b3 5 b7","seventhQuality":"m7","transitionsFrom":"Aeolian","triadQuality":"Minor","unnaturalNotes":"b3, b7","unstableTones":"—"},
+            {"characteristicTone":"b2","colorNotes":"b2 4 6","function":"iii","intervallicSet":["1","b2","b3","4","5","b6","b7"],"mode":"Phrygian","seventhNotes":"R b3 5 b7","seventhQuality":"m7","transitionsFrom":"Aeolian","triadQuality":"Minor","unnaturalNotes":"b2, b3, b6, b7","unstableTones":"b2, b6"},
+            {"characteristicTone":"#4","colorNotes":"2 #4 6","function":"IV","intervallicSet":["1","2","3","#4","5","6","7"],"mode":"Lydian","seventhNotes":"R 3 5 7","seventhQuality":"maj7","transitionsFrom":"Ionian","triadQuality":"Major","unnaturalNotes":"#4","unstableTones":"—"},
+            {"characteristicTone":"b7","colorNotes":"2 4 6","function":"V","intervallicSet":["1","2","3","4","5","6","b7"],"mode":"Mixolydian","seventhNotes":"R 3 5 b7","seventhQuality":"dom7","transitionsFrom":"Ionian","triadQuality":"Major","unnaturalNotes":"b7","unstableTones":"4"},
+            {"characteristicTone":"(b6)","colorNotes":"2 4 b6","function":"vi","intervallicSet":["1","2","b3","4","5","b6","b7"],"mode":"Aeolian (minor scale)","seventhNotes":"R b3 5 b7","seventhQuality":"m7","transitionsFrom":"—","triadQuality":"Minor","unnaturalNotes":"b3, b7, b7","unstableTones":"b6"},
+            {"characteristicTone":"b5","colorNotes":"b2 4 b6","function":"vii","intervallicSet":["1","b2","b3","4","b5","b6","b7"],"mode":"Locrian","seventhNotes":"R b3 b5 b7","seventhQuality":"m7b5","transitionsFrom":"Phrygian","triadQuality":"Diminished","unnaturalNotes":"b2, b3, b5, b6, b7","unstableTones":"?"}
+        ]
+    };
+
+    let currentAnswer;
+    let selectedQuestionType = null;
+
+    // Initialize question buttons in the menu
+    function initMenu() {
+        const questionButtons = document.getElementById('question-buttons');
+        Object.entries(data.attributes).forEach(([key, label]) => {
+            const button = document.createElement('button');
+            button.textContent = label;
+            button.onclick = () => selectQuestionType(key);
+            questionButtons.appendChild(button);
+        });
+    }
+
+    // Show the menu screen
+    function showMenu() {
+        document.getElementById('menu').style.display = 'flex';
+        document.getElementById('quiz-card').style.display = 'none';
+    }
+
+    // Select a specific question type
+    function selectQuestionType(attributeKey) {
+        selectedQuestionType = attributeKey; // Store the selected question type
+        const mode = data.modes[Math.floor(Math.random() * data.modes.length)];
+        displayQuestion(mode, attributeKey);
+    }
+
+    // Pick a random question and mode
+    function randomQuestion() {
+        const attributeKeys = Object.keys(data.attributes).filter(key => key !== 'mode');
+        const mode = data.modes[Math.floor(Math.random() * data.modes.length)];
+        const attributeKey = attributeKeys[Math.floor(Math.random() * attributeKeys.length)];
+        displayQuestion(mode, attributeKey);
+    }
+
+    // Display a question for a given mode and attribute
+    function displayQuestion(mode, attributeKey) {
+        const attributeLabel = data.attributes[attributeKey];
+        currentAnswer = mode[attributeKey];
+
+        document.querySelector('.mode-name').textContent = mode.mode;
+        document.querySelector('.question').textContent = attributeLabel;
+        document.querySelector('.answer').textContent = currentAnswer;
+
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('quiz-card').style.display = 'flex';
+    }
+
+    // Show the answer and change button
+    function showAnswer() {
+        document.querySelector('.answer').style.visibility = 'visible';
+        document.querySelector('.button-show').style.display = 'none';
+        document.querySelector('.button-next').style.display = 'inline-block';
+    }
+
+    // Load a new random mode when "Next Question" is clicked
+    function nextQuestion() {
+        const mode = data.modes[Math.floor(Math.random() * data.modes.length)];
+        displayQuestion(mode, selectedQuestionType);
+    }
+
+    // Initialize the menu on page load
+    initMenu();
+</script>
+
+</body>
+</html>
