@@ -113,7 +113,7 @@
     </div>
     <div class="button-container">
         <button class="button button-show" onclick="showAnswer()">Show Answer</button>
-        <button class="button button-next" onclick="nextQuestion()">Next Question</button>
+        <button class="button button-next" onclick="nextQuestion()">Next Mode</button>
         <button class="button button-back" onclick="showMenu()">Back to Menu</button>
     </div>
 </div>
@@ -189,6 +189,9 @@
 
         document.getElementById('menu').style.display = 'none';
         document.getElementById('quiz-card').style.display = 'flex';
+        document.querySelector('.answer').style.visibility = 'hidden';
+        document.querySelector('.button-show').style.display = 'inline-block';
+        document.querySelector('.button-next').style.display = 'none';
     }
 
     // Show the answer and change button
@@ -198,7 +201,7 @@
         document.querySelector('.button-next').style.display = 'inline-block';
     }
 
-    // Load a new random mode when "Next Question" is clicked
+    // Load a new random mode when "Next Mode" is clicked
     function nextQuestion() {
         const mode = data.modes[Math.floor(Math.random() * data.modes.length)];
         displayQuestion(mode, selectedQuestionType);
